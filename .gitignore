@@ -9,7 +9,16 @@ TMD/
 Visualization/movies/
 For RGB/
 Notebooks/extracted/
+Planet_Others/
 DRAFT - Remote Sensing Analysis.docx
 Remote Sensing Analysis - Report.docx
 output.png
 Three Bays Mangrove Forest - Remote Sensing Prelim.pptx
+Notebooks/data/FashionMNIST/raw/t10k-images-idx3-ubyte
+Notebooks/data/FashionMNIST/raw/t10k-images-idx3-ubyte.gz
+Notebooks/data/FashionMNIST/raw/t10k-labels-idx1-ubyte
+Notebooks/data/FashionMNIST/raw/t10k-labels-idx1-ubyte.gz
+Notebooks/data/FashionMNIST/raw/train-images-idx3-ubyte
+Notebooks/data/FashionMNIST/raw/train-images-idx3-ubyte.gz
+Notebooks/data/FashionMNIST/raw/train-labels-idx1-ubyte
+Notebooks/data/FashionMNIST/raw/train-labels-idx1-ubyte.gz
