@@ -1,20 +1,11 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis version="3.20.3-Odense">
+<qgis version="3.22.1-Bia?owie?a">
   <identifier></identifier>
   <parentidentifier></parentidentifier>
   <language></language>
   <type>dataset</type>
   <title></title>
   <abstract></abstract>
-  <contact>
-    <name></name>
-    <organization></organization>
-    <position></position>
-    <voice></voice>
-    <fax></fax>
-    <email></email>
-    <role></role>
-  </contact>
   <links/>
   <fees></fees>
   <encoding></encoding>
@@ -31,13 +22,5 @@
       <geographicflag>false</geographicflag>
     </spatialrefsys>
   </crs>
-  <extent>
-    <spatial maxy="0" maxz="0" minx="0" minz="0" maxx="0" miny="0" dimensions="2" crs=""/>
-    <temporal>
-      <period>
-        <start></start>
-        <end></end>
-      </period>
-    </temporal>
-  </extent>
+  <extent/>
 </qgis>
