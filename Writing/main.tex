@@ -143,10 +143,10 @@ This analysis makes use of an array of satellite imagery solutions, indices and 
 
 \subsection{Datasets}
 \subsubsection{Landsat}
-Landsat 7 and 8 were used to track NDVI changes between the past decade in the region (2010 – 2022). While the resolutions of Landsat 7-8 instruments are lower than other commercially available satellites, it is very convenient for getting numerous readings for long periods of time for a large region. As such, it was mainly used to form time-series of NDVI in the whole forest and certain key regions.
+Landsat refers to series of satellite observation missions by NASA and the USGS. They specialize in Earth observations and feature bands in RGB, Near Infrared, Short-Wave Infrared and Thermal Infrared. Landsat 7 and 8 were used to track NDVI changes between the past decade in the region (2010 – 2022). While the resolution of Landsat 7-8 instruments (30-meters) are lower than other commercially available satellites, it is very convenient for getting numerous readings for long periods of time for a large region. As such, it was mainly used to form time-series of NDVI in the whole forest and certain key regions.
 
 \subsubsection{PlanetLabs}
-PlanetLabs data present much higher resolution (3-5m) but fewer bands for analysis. It is also costly to pull near-weekly data from PlanetLabs. As such, observations around the first 2 months of the year, every 3 years, are taken between 2010 and 2022. This data has been used to monitor mangrove cover and coastline change.
+PlanetLabs data present much higher resolution (3-5m) but fewer bands for analysis (only Red, Blue, Green and Near-Infrared). It is also costly to pull near-weekly data from PlanetLabs. As such, observations around the first 2 months of the year, every 3 years, are taken between 2010 and 2022. This data has been used to monitor mangrove cover and coastline change.
 
 \subsection{Workflow}
 ** Add figure showing workflow **
@@ -160,9 +160,7 @@ With the tidal regime at our site in hand, we can then select available satellit
 
 \subsection{Image Classification}
 \subsubsection{K-means Clustering}
-"k-means clustering is a method of vector quantization, originally from signal processing, that aims to partition n observations into k clusters in which each observation belongs to the cluster with the nearest mean (cluster centers or cluster centroid), serving as a prototype of the cluster. This results in a partitioning of the data space into Voronoi cells. k-means clustering minimizes within-cluster variances (squared Euclidean distances), but not regular Euclidean distances, which would be the more difficult Weber problem: the mean optimizes squared errors, whereas only the geometric median minimizes Euclidean distances. For instance, better Euclidean solutions can be found using k-medians and k-medoids."
-
-We use K-means clustering on the surface reflectance values to classify the different land cover into 4 types: open water, mangrove vegetation, bare soil 1 (bare sand), and bare soil 2 (mud flat). After masking out the open water and bare soil covers, the remaining mangrove vegetation covers are compared over years to track the patterns in mangrove cover change.
+We use K-means Clustering, a vector quantization method, on the surface reflectance values to classify the different land cover into 4 types: open water, mangrove vegetation, viable land, and bare soil (mud flat). The viable land classification refers to pixels containing either low-density vegetation, or bare soil that is fit for colonization by mangroves. After masking out the open water and bare soil covers, the remaining mangrove vegetation and viable land covers are compared over years to track the patterns in mangrove cover change.
 
 \subsubsection{Deep Learning Classification}
 ??? (Potential Future Work.)
