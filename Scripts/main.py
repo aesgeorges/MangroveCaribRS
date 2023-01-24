@@ -7,6 +7,7 @@ Written by Alexandre Erich Sebastien Georges, PhD Student at UC Berkeley in EFMH
 import os, pickle, itertools, glob, re, datetime
 import tkinter as tk
 from tkinter import filedialog
+from tqdm import tqdm
 
 import xarray as xr
 import geopandas as gpd
@@ -16,7 +17,7 @@ from plot_funcs import *
 from index_math import *
 from data_acq import *
 
-root = tk.Tk()
+root = tk.Tk() 
 
 aoi_list = filedialog.askopenfilenames(title='Please input the AOIs .shp files', filetypes=[('Shapefiles', '*.shp')])
 
@@ -24,4 +25,4 @@ sites, resSites = pull_data(aoi_list)
 
 sites, ndwiMasks, ndviSites = compute_all_indices(sites, times, time_var)
 
-print('test')
+plot_all(sites, aoi_list, 'viridis')

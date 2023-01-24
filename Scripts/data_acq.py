@@ -1,9 +1,13 @@
 import xarray as xr
 import geopandas as gpd
 import rioxarray as rxr
+from tqdm import tqdm
 import glob, re, datetime
+import tkinter as tk
+from tkinter import filedialog
 
-data_dir = 'E:/PhD Data/Planet 3m/*.TIF'
+root = tk.Tk() 
+data_dir = list(filedialog.askopenfilenames(title='Please input the .TIF files', filetypes=[('GeoTIFF', '*.TIF')]))
 sites = []
 resSites = []
 
@@ -36,7 +40,7 @@ times = [i.strftime('%m/%d/%Y') for i in paths_to_datetimeindex(glob.glob(data_d
 time_var = xr.Variable('Observation Date', times)
 
 def pull_data(aoi_list):
-    for area in aoi_list:
+    for area in tqdm(aoi_list, desc='Acquiring Data for each AOI'):
         aoi = gpd.read_file(area)
         geotiffs_da = xr.concat(
             [rxr.open_rasterio(entry).rio.clip(aoi.geometry, from_disk=True).squeeze() 

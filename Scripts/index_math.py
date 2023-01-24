@@ -1,6 +1,6 @@
 import xarray as xr
 import numpy as np
-
+from tqdm import tqdm
 
 def compute_all_indices(sites, times, time_var):
     sites, ndwiMasks = compute_ndwi(sites, times, time_var)
@@ -12,7 +12,7 @@ def compute_all_indices(sites, times, time_var):
 # NDWI = (green - nir)/(green + nir) McFeeters (1996)
 def compute_ndwi(sites, times, time_var):
     ndwiMasks= []
-    for i,site in enumerate(sites):
+    for i,site in tqdm(enumerate(sites), desc='Computing NDWI'):
         ndwi_times = []
         for time in times:
             ndwi = (site[time][3] - site[time][7])/(site[time][3] + site[time][7])
@@ -26,7 +26,7 @@ def compute_ndwi(sites, times, time_var):
 # NDVI = (nir - red)/(nir + red) 
 def compute_ndvi(sites, times, time_var):
     ndviSites = []
-    for i,site in enumerate(sites):
+    for i,site in tqdm(enumerate(sites), desc='Computing NDVI'):
         ndvi_times = []
         for time in times:
             ndvi = (site[time][7] - site[time][5])/(site[time][7] + site[time][5])
@@ -39,7 +39,7 @@ def compute_ndvi(sites, times, time_var):
 
 # msavi2 = (2 * nir + 1 - sqrt( (2 * nir + 1)^2 - 8 * (nir - red) )) / 2 
 def compute_msavi2(sites, times, time_var):
-    for i,site in enumerate(sites):
+    for i,site in tqdm(enumerate(sites), desc='Computing MSAVI2'):
         msavi_times = []
         for time in times:
             msavi = 0.5*(2*site[time][7] + 1 - np.sqrt(np.square(2*site[time][7]+1) - 8*(site[time][7] - site[time][5])))

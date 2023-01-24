@@ -25,9 +25,10 @@ patches = [mpatches.Patch(color='#1f78b4', label='Water'),
 
 # Function to plot visualizations of all sites
 def plot_all(sites_toplot, aoi_list, cmap):
-    fig, axs = plt.subplots(3,5, figsize=(12,16))
+    fig, axs = plt.subplots(2,3, figsize=(12,16))
     axs = list(itertools.chain.from_iterable(axs))
     count = 0
+    print('check')
     for j,blur in enumerate(sites_toplot):
         for ob in blur:
             nd = axs[count].imshow(ob, cmap=cmap)
