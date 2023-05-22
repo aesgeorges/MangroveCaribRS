@@ -5,15 +5,15 @@ import numpy as np
 
 from params import DOWNLOAD_DIR_HT, DOWNLOAD_DIR_TT
 
-search_criteria = "*harmonized_clip_bandmath.TIF"
+search_criteria = "*SR_clip_bandmath.TIF" #"*harmonized_clip_bandmath.TIF"
 
 def paths_to_datetimeindex(list):
     """Converts a list of file paths to a list of datetime objects for given observations"""
-    pattern = r'.*(\d{4}\d{2}\d{2}).*'
+    pattern = r'.*(\d{4}-\d{2}-\d{2}).*'  #r'.*(\d{4}\d{2}\d{2}).*'
     new_list = []
     for item in list:
         time = re.search(pattern, item).group(1)
-        time = datetime.datetime.strptime(time, '%Y%m%d').date()
+        time = datetime.datetime.strptime(time, '%Y-%m-%d').date()
         new_list.append(time)
     new_list = sorted(new_list)    
     return new_list
@@ -41,6 +41,7 @@ def find_dates(ht_files, tt_files):
 def merge_observations(dates, files, dl_path):
     """Merges .tif files with same observation dates in a mosaic together"""
     for date in dates:
+        print('Merging images for date: ', date + '...')
         samedate_files = []
         for file in files:
             filedate = paths_to_datetimeindex([file])[0].strftime('%m-%d-%Y')
@@ -53,7 +54,7 @@ def merge_observations(dates, files, dl_path):
 ht_files, tt_files = find_files()
 ht_dates, tt_dates = find_dates(ht_files, tt_files)
 
-merge_observations(ht_dates, ht_files, DOWNLOAD_DIR_HT)
-#merge_observations(tt_dates, tt_files, DOWNLOAD_DIR_TT)
+#merge_observations(ht_dates, ht_files, DOWNLOAD_DIR_HT)
+merge_observations(tt_dates, tt_files, DOWNLOAD_DIR_TT)
 
 
