@@ -1,6 +1,6 @@
 from datetime import datetime
 
-mobile = True
+mobile = False
 
 #  Download directories for Haiti and Trinidad respectively 
 if mobile == True:
