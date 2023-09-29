@@ -1,0 +1,5 @@
+/global/
+/datasets/Processed/*.nc
+*.tif
+*.xml
+*.nc
