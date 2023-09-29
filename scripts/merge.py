@@ -7,7 +7,10 @@ from osgeo import gdal
 import numpy as np
 
 
-from params import DOWNLOAD_DIR_ROOT
+import sys
+sys.path.append('/global/home/users/alexandregeorges/Chapter1/')
+
+from codebase.params import DOWNLOAD_DIR_ROOT
 
 # Search criteria for observation files to be mosaic merged based on Planet naming convention.
 search_criteria = "*_clip_bandmath.tif" #"*harmonized_clip_bandmath.TIF"
