@@ -90,9 +90,9 @@ def merge_observations(dates, files, dl_path):
         mosaic = None
     quality_control(merged_paths)
 
-site_codes = ['CCHT']#['CCHT', 'GSHT', 'BRHT', 'COHT', 'IVHT', 'AQHT', 'MGHT', 'ARHT', 'OKHT']
+#site_codes = ['CCHT']#['CCHT', 'GSHT', 'BRHT', 'COHT', 'IVHT', 'AQHT', 'MGHT', 'ARHT', 'OKHT']
 
-
+site_codes = [input('Enter the site code for which your trying to merge (CCHT, CRTT, GPHT, etc.): ')]
 user_input = input('Are you trying to merge images meant for model training? (True/False): ')
 if user_input in ['True', 't', 'Yes']:
     DOWNLOAD_DIR_ROOT = DOWNLOAD_DIR_ROOT + 'TRAINING/'

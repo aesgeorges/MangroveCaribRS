@@ -1,6 +1,8 @@
-from scripts.params import *
+from .params import *
+import numpy as np
+import pandas as pd
 
-def moa_calc(inputSites, dir): # Inputs are region to calculate MOA on and the direction to take MOA on, dir = 'x' or 'y'
+def moa_calc(inputSites, dir, times): # Inputs are region to calculate MOA on and the direction to take MOA on, dir = 'x' or 'y'
     secMOAs = []
     for j in range(len(times)):
         moa_yr = []
@@ -25,7 +27,7 @@ def moa_calc(inputSites, dir): # Inputs are region to calculate MOA on and the d
     return secMOAs, changeMOA, percMOA
 
 
-def get_metrics(inputSites):
+def get_metrics(inputSites, times):
     pixelSites = []
     areaSites = []
     changeSites = []
@@ -47,8 +49,8 @@ def get_metrics(inputSites):
         percChangeSites.append(percent)
 
     # Calculate MOA in x and y
-    secMOAs_x, changeMOA_x, percMOA_x = moa_calc(inputSites, 0)
-    secMOAs_y, changeMOA_y, percMOA_y = moa_calc(inputSites, 1)
+    secMOAs_x, changeMOA_x, percMOA_x = moa_calc(inputSites, 0, times)
+    secMOAs_y, changeMOA_y, percMOA_y = moa_calc(inputSites, 1, times)
 
     # Calculate Polar MOA
     secMOA_pol = []
@@ -74,8 +76,8 @@ def ndvi_calc(times, split_sites, aoi_list):
 
 
 def uvvr_calc(times, unvegSites, mangroveSites, aoi_list):
-    unvegArea = get_metrics(unvegSites)[0]
-    vegArea = get_metrics(mangroveSites)[0]
+    unvegArea = get_metrics(unvegSites, times)[0]
+    vegArea = get_metrics(mangroveSites, times)[0]
     uvvrSites = []
 
     df_uvvr = pd.DataFrame(columns=aoi_list)

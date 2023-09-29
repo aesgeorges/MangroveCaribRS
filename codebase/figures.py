@@ -5,6 +5,8 @@ import rioxarray as rxr
 import earthpy.plot as ep
 import matplotlib.pyplot as plt
 
+from datetime import datetime, timedelta
+
 import matplotlib as mpl
 import matplotlib.patches as mpatches
 from matplotlib import colors as colors_mat
@@ -23,8 +25,7 @@ def metrics_timeseries(df, site_code, title, ylabel):
     """
     fig, ax = plt.subplots(figsize=(20,10))
     df.plot.scatter(x='ndates', y=site_code, ax=ax, c='tab:orange', marker='+', s=300, lw=7, zorder=5)
-    df_NDVI.plot(x='ndates', y='linfit', ax=ax, c='tab:blue', lw=7, alpha=0.5, label='Linear Fit', zorder=10)
-
+    df.plot(x='ndates', y='linfit', ax=ax, c='tab:blue', lw=7, alpha=0.5, label='Linear Fit', zorder=10)
 
     ax.set_xlim(df['ndates'].min() - timedelta(days=20), df['ndates'].max() + timedelta(days=100))
 
@@ -40,7 +41,7 @@ def metrics_timeseries(df, site_code, title, ylabel):
     plt.show();
     
 
-def metrics_visualization(metric, title):
+def metrics_visualization(metric, aoi_list, title):
     """Plot the trajectory visualization of forest health metrics (gross cover change and polar moment).
     
     metric -- pandas Dataframe holding calculated metrics for a given site.
@@ -85,6 +86,6 @@ def metrics_visualization(metric, title):
                 mpatches.Patch(color='red', label='Net Decrease in Gross Cover and Distribution')]
     ax.legend(handles=patches, loc='upper right', borderaxespad=0.)
     ax.set_title(title)
-    ax.set_xlim(-1.8, 1.8)
+    #ax.set_xlim(-1.8, 1.8)
     ax.patch.set_facecolor('xkcd:white')
     ax.set_axisbelow(True)
