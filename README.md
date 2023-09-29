@@ -6,7 +6,9 @@ Metrics such as NDVI, UVVR, and Gross Cover Change are used to evaluate the evol
 * Baie de Caracol, Nord-Est, Haiti
 * Caroni Swamp, Trinidad, Trinidad-and-Tobago
 
-![Coastal and Mangrove Cover Change_V3_s](https://user-images.githubusercontent.com/7967578/177655433-2e286087-04da-4c3b-969e-be156453a7e4.png)
+
+<img width="3456" alt="GRC Poster Draft" src="https://github.com/AlexandreSeb97/RSHaiti-GPBay/assets/7967578/8b53d052-73c6-4a50-8476-4499693342ab">
+[GRC Poster_Alexandre Georges.pdf](https://github.com/AlexandreSeb97/RSHaiti-GPBay/files/12761175/GRC.Poster_Alexandre.Georges.pdf)
 
 
 This project is being developed by Alexandre E. S. Georges, PhD Student in Environmental Engineering at the University of California, Berkeley, supervised by Mark T. Stacey.
