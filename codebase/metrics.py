@@ -1,6 +1,8 @@
 from .params import *
 import numpy as np
 import pandas as pd
+import dask
+
 
 def moa_calc(inputSites, dir, times): # Inputs are region to calculate MOA on and the direction to take MOA on, dir = 'x' or 'y'
     secMOAs = []
@@ -75,6 +77,7 @@ def ndvi_calc(times, split_sites, aoi_list):
     return df    
 
 
+@dask.delayed
 def uvvr_calc(times, unvegSites, mangroveSites, aoi_list):
     unvegArea = get_metrics(unvegSites, times)[0]
     vegArea = get_metrics(mangroveSites, times)[0]
