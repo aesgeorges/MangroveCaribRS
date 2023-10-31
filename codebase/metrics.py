@@ -77,7 +77,6 @@ def ndvi_calc(times, split_sites, aoi_list):
     return df    
 
 
-@dask.delayed
 def uvvr_calc(times, unvegSites, mangroveSites, aoi_list):
     unvegArea = get_metrics(unvegSites, times)[0]
     vegArea = get_metrics(mangroveSites, times)[0]

@@ -1,6 +1,7 @@
 from .params import *
 
 import numpy as np
+import pandas as pd
 import rioxarray as rxr
 import earthpy.plot as ep
 import matplotlib.pyplot as plt
@@ -12,6 +13,104 @@ import matplotlib.patches as mpatches
 from matplotlib import colors as colors_mat
 
 import seaborn as sns
+
+def clean_season(df, yr_index):
+    """Drop the NaNs from the data for distribution plotting. Takes and outputs an array from a dataframe."""
+    data = np.array(df['NDVI'].iloc[yr_index])
+    return data[~np.isnan(data)] 
+
+
+def plot_ridge(sn, color, index, ax, count):
+    """Plots a singular ridge for the ridgeplot. Involves a kdeplot. interp to find height at median. a vline.
+    
+    sn -- data for a given season
+    color -- color to plot ridge and marker.
+    index -- year index we are plotting for.
+    ax -- axis we are plotting on.
+    count -- tracks which line in the figure we are working with.
+    """
+    data = clean_season(sn, index)
+    k = sns.kdeplot(data, ax=ax, fill=False, color=color, linewidth=1.2)
+    x,y = k.get_lines()[count].get_data()
+    
+    mode = x[np.argmax(y)]
+    f = np.interp(mode,x,y)
+    ax.vlines(mode, 0, f, color=color, lw=1.2)
+    
+def data_prep(obs, times):
+    """Wrangle and process the raw xarray data for ridgeplot."""
+    # Make dataframe of NDVI array for each observation. Mark year and month for further aggregation.
+    y = [obs[time][-1].values.ravel().tolist() for time in times]
+    df = pd.DataFrame({
+        'Date': times,
+        'NDVI': y
+    })
+    df['year'] = pd.to_datetime(df['Date']).dt.year
+    df['month'] = pd.to_datetime(df['Date']).dt.month
+    # Split dataframe in wet and dry seasons.
+    dfwet = df[(df['month'] >= 5) & (df['month'] <= 10)]
+    dfdry = df[~(df['month'] >= 5) & (df['month'] <= 10)]
+    # Aggregate NDVI values per year per season.
+    wet = dfwet.groupby('year').agg({'NDVI':'sum'})
+    dry = dfdry.groupby('year').agg({'NDVI':'sum'})
+    return wet, dry
+
+
+def ndvi_ridgeplots(obs, times, site_code):
+    """ Plot a ridgeplot of aggregated NDVI values per season and per year."""
+    wet, dry = data_prep(obs, times)
+    
+    years = np.arange(2010, 2021)
+    fig, axs = plt.subplots(len(years), 1, figsize=(9,len(years)+5), sharex=True)
+    dry_count=0
+    wet_count=0
+    for i, ax in enumerate(axs):
+        ax.set_xlim(-0.5, 1)
+        ax.text(x=-0.5, y=0.5, s=years[i])
+        ax.patch.set_alpha(0.0)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        #ax.spines['bottom'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.get_yaxis().set_visible(False)
+        #ax.get_xaxis().set_visible(False)
+        count=0
+        try:
+            plot_ridge(wet, 'tab:blue', wet_count, ax, count)
+            count += 1
+            wet_count+=1
+        except Exception as error:
+            #print(error)
+            try:
+                wet_count-=1
+                plot_ridge(dry, 'tab:red', dry_count, ax, count)
+                count += 1
+                dry_count+=1
+                ax.text(x=-0.5, y=1.5, s='No wet season observations for that year.', color='tab:blue')
+                continue
+            except Exception as error:
+                #print(error)
+                ax.text(x=-0.5, y=0.03, s='No data for that year.', color='tab:blue')
+                i-=1
+                continue
+        try:
+            plot_ridge(dry, 'tab:red', i, ax, count)
+            count += 1
+            dry_count+=1
+        except Exception as error:
+            dry_count-=1
+            #print(error)
+            ax.text(x=-0.5, y=1.5, s='No dry season observations for that year.', color='tab:red')
+
+    #fig.subplots_adjust(wspace=0, hspace=-0.5)
+    patches = [mpatches.Patch(color='tab:red', label='Dry Season'),
+               mpatches.Patch(color='tab:blue', label='Wet Season'),
+               ]
+
+    #fig.legend(handles=patches, fancybox=False, loc='lower right', ncol=1)
+    fig.supxlabel('Seasonal NDVI Distribution at '+site_code)
+    #plt.tight_layout()
+    
 
 def metrics_timeseries(df, site_code, title, ylabel):
     """ Plot the timeseries of specified health metric.
