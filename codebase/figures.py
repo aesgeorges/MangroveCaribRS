@@ -69,10 +69,10 @@ def plot_box(data, site_code):
     hue_order = ['Wet', 'Dry']
     
     sns.boxplot(data=data, x='water_year', y='NDVI', hue='season', hue_order=hue_order, palette=palette, showfliers=False, ax=ax, zorder=1);
-    ax.axhline(y=0.7, color='tab:green', zorder=0)
-    ax.axhline(y=0.0, color='tab:red', zorder=0)
+    ax.axhline(y=0.6, color='tab:green', zorder=0)
+    ax.axhline(y=0.2, color='tab:red', zorder=0)
     #ax.fill_between(x=[-1,3], y1=0.7, y2=1, alpha=0.3, color='tab:green')
-    ax.set_ylim([-0.75,1]);
+    ax.set_ylim([0,1]);
     ax.set_title('Seasonal NDVI Distribution at '+site_code)
     plt.show() 
 
