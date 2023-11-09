@@ -38,3 +38,8 @@ def paths_to_datetimeindex(list):
         new_list.append(time)
     new_list = sorted(new_list)    
     return new_list
+
+
+def mask_dataset(obs, ds):
+    """Return dataset of observations with mangrove masked in."""
+    return obs.where(~ds['mangrove'].isel(time=0))
