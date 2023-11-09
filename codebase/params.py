@@ -3,8 +3,8 @@ from datetime import datetime
 mobile = False
 
 # Directory roots
-DOWNLOAD_DIR_ROOT = 'datasets/Planet/' #/global/scratch/users/alexandregeorges/datasets/Planet/'
-ROOT_SHP = 'datasets/Shapefiles/'
+DOWNLOAD_DIR_ROOT = '../datasets/Planet/' #/global/scratch/users/alexandregeorges/datasets/Planet/'
+ROOT_SHP = '../datasets/Shapefiles/'
 
 #  Download directories for Haiti and Trinidad respectively 
 if mobile == True:
@@ -40,7 +40,7 @@ BUNDLE = 'analytic_8b_sr_udm2' #analytic_sr #'analytic_8b_sr_udm2' #
 PATTERN_REGEX = r'.*(\d{2}-\d{2}-\d{4}).*'
 
 # Model Dump and Load Path
-CLASSIFIER_PATH = 'outputs/models/hgb_retrained.joblib' #'models/hgb_gpbay_test2.joblib'#'models/hgb_gpbay.joblib'#'models/hgb_classifier.joblib'
+CLASSIFIER_PATH = '../outputs/models/hgb_retrained.joblib' #'models/hgb_gpbay_test2.joblib'#'models/hgb_gpbay.joblib'#'models/hgb_classifier.joblib'
 
 # Observation Datacube
 OBS_PREFIX = '../datasets/Processed/' #'/global/scratch/users/alexandregeorges/datasets/Processed/'
