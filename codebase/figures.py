@@ -20,22 +20,18 @@ def clean_season(df, yr_index):
     return data[~np.isnan(data)] 
 
 
-def plot_ridge(sn, color, index, ax, count):
-    """Plots a singular ridge for the ridgeplot. Involves a kdeplot. interp to find height at median. a vline.
+def clean_df(row):
+    """Drop the NaNs from every row in a season df for distribution plotting. Takes and outputs a row (would be an np.array) from a dataframe."""
+    return row[~np.isnan(row)]
+
+
+def get_season(month):
+    """Returns the season based on provided month of the year."""
+    if month >= 5 and month <= 10:
+        return 'Wet'
+    else:
+        return 'Dry'
     
-    sn -- data for a given season
-    color -- color to plot ridge and marker.
-    index -- year index we are plotting for.
-    ax -- axis we are plotting on.
-    count -- tracks which line in the figure we are working with.
-    """
-    data = clean_season(sn, index)
-    k = sns.kdeplot(data, ax=ax, fill=False, color=color, linewidth=1.2)
-    x,y = k.get_lines()[count].get_data()
-    
-    mode = x[np.argmax(y)]
-    f = np.interp(mode,x,y)
-    ax.vlines(mode, 0, f, color=color, lw=1.2)
     
 def data_prep(obs, times):
     """Wrangle and process the raw xarray data for ridgeplot."""
@@ -47,17 +43,80 @@ def data_prep(obs, times):
     })
     df['year'] = pd.to_datetime(df['Date']).dt.year
     df['month'] = pd.to_datetime(df['Date']).dt.month
-    # Split dataframe in wet and dry seasons.
-    dfwet = df[(df['month'] >= 5) & (df['month'] <= 10)]
-    dfdry = df[~(df['month'] >= 5) & (df['month'] <= 10)]
+    df['water_year'] = df['year'].where(df['month'] < 10, df['year'] + 1)
+    df['season'] = df['month'].apply(get_season)
     # Aggregate NDVI values per year per season.
-    wet = dfwet.groupby('year').agg({'NDVI':'sum'})
-    dry = dfdry.groupby('year').agg({'NDVI':'sum'})
-    return wet, dry
+    data = df.groupby(['water_year', 'season']).agg({'NDVI':'sum'})
+    return data
+    
+
+def data_prep_box(obs, times):
+    """Wrangle and process raw xarray data for boxplot."""
+    # First level processing fit for ridgeplot by year and season
+    data = data_prep(obs, times) 
+    # Change formatting to be fit for seaborn boxplot
+    data_reset = data.reset_index()
+    data_reset['NDVI'] = data_reset['NDVI'].apply(np.array)
+    data_reset['NDVI'] = data_reset['NDVI'].apply(clean_df)
+    return data_reset.explode('NDVI')
 
 
-def ndvi_ridgeplots(obs, times, site_code):
+def plot_ridge(sn, color, index, ax, count):
+    """Plots a singular ridge for the ridgeplot. Involves a kdeplot. interp to find height at median. a vline.
+    
+    sn -- data for a given season
+    color -- color to plot ridge and marker.
+    index -- year index we are plotting for.
+    ax -- axis we are plotting on.
+    count -- tracks which line in the figure we are working with.
+    """
+    data = clean_season(sn, index)
+    k = sns.kdeplot(data, ax=ax, fill=False, common_norm=True, color=color, linewidth=1.2)
+    x,y = k.get_lines()[count].get_data()
+    
+    mode = x[np.argmax(y)]
+    f = np.interp(mode,x,y)
+    ax.vlines(mode, 0, f, color=color, lw=1.5)
+    
+    
+    y_low = np.interp(0,x,y)
+    y_high = np.interp(0.7,x,y)
+    ax.vlines(0, 0, y_low, color='tab:red', linestyles='dashed', lw=1.5)
+    ax.vlines(0.7, 0, y_high, color='tab:green', linestyles='dashed', lw=1.5)
+    
+    #ax.fill_between(x,y, where=(x<0), interpolate=True, alpha=0.3, color='moccasin')
+    #ax.fill_between(x,y, where=(x>0.7), interpolate=True, alpha=0.3, color='tab:green')
+
+
+def sn_ridgeplots(data, site_code):
     """ Plot a ridgeplot of aggregated NDVI values per season and per year."""
+    n_seasons = data.shape[0]
+    fig, axs = plt.subplots(n_seasons, 1, figsize=(9, n_seasons+1), sharex=True)
+    
+    for i, ax in enumerate(axs):
+        yr = data.iloc[i].name[0]
+        season = data.iloc[i].name[1]
+        
+        ax.set_xlim(-0.5, 1)
+        ax.text(x=-0.5, y=0.5, s=str(yr)+', '+season)
+        ax.patch.set_alpha(0.0)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.get_yaxis().set_visible(False)
+        
+        count = 0
+        if season == 'Wet':
+            plot_ridge(data, 'tab:blue', i, ax, count)
+            count += 1
+        else:
+            plot_ridge(data, 'tab:red', i, ax, count)
+            count += 1
+    fig.supxlabel('Seasonal NDVI Distribution at '+site_code)
+
+    
+def yr_ridgeplots(obs, times, site_code):
+    """ Plot a ridgeplot of aggregated NDVI values per year."""
     wet, dry = data_prep(obs, times)
     
     years = np.arange(2010, 2021)
@@ -81,14 +140,14 @@ def ndvi_ridgeplots(obs, times, site_code):
             wet_count+=1
         except Exception as error:
             #print(error)
-            try:
-                wet_count-=1
-                plot_ridge(dry, 'tab:red', dry_count, ax, count)
-                count += 1
-                dry_count+=1
-                ax.text(x=-0.5, y=1.5, s='No wet season observations for that year.', color='tab:blue')
-                continue
-            except Exception as error:
+            #try:
+            wet_count-=1
+                #plot_ridge(dry, 'tab:red', dry_count, ax, count)
+            count += 1
+                #dry_count+=1
+            ax.text(x=-0.5, y=1.5, s='No wet season observations for that year.', color='tab:blue')
+            continue
+            """except Exception as error:
                 #print(error)
                 ax.text(x=-0.5, y=0.03, s='No data for that year.', color='tab:blue')
                 i-=1
@@ -100,7 +159,7 @@ def ndvi_ridgeplots(obs, times, site_code):
         except Exception as error:
             dry_count-=1
             #print(error)
-            ax.text(x=-0.5, y=1.5, s='No dry season observations for that year.', color='tab:red')
+            ax.text(x=-0.5, y=1.5, s='No dry season observations for that year.', color='tab:red')"""
 
     #fig.subplots_adjust(wspace=0, hspace=-0.5)
     patches = [mpatches.Patch(color='tab:red', label='Dry Season'),
