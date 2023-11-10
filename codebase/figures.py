@@ -1,4 +1,5 @@
 from .params import *
+from .utils import *
 
 import numpy as np
 import pandas as pd
@@ -11,6 +12,7 @@ from datetime import datetime, timedelta
 import matplotlib as mpl
 import matplotlib.patches as mpatches
 from matplotlib import colors as colors_mat
+import matplotlib.animation as animation
 
 import seaborn as sns
 
@@ -22,6 +24,7 @@ def clean_season(df, yr_index):
 
 def clean_df(row):
     """Drop the NaNs from every row in a season df for distribution plotting. Takes and outputs a row (would be an np.array) from a dataframe."""
+    row = np.array(row)
     return row[~np.isnan(row)]
 
 
@@ -76,6 +79,43 @@ def plot_box(data, site_code):
     ax.set_title('Seasonal NDVI Distribution at '+site_code)
     plt.show() 
 
+
+def animate_ndvi_maps(ds, times, site_code):
+    """Output an animation of NDVI maps over time. NDVI values are binned into 3 categories."""
+    
+    colors = ['tab:red', 'tab:orange', 'tab:green', '#000000']
+    bins = [0, 0.2, 0.6, 1]
+    assert len(bins) == len(colors)
+    cmap = mpl.colors.ListedColormap(colors)
+    norm = mpl.colors.BoundaryNorm(bins, len(cmap.colors)-1)
+
+    patches = [mpatches.Patch(color=colors[0], label='No Veg. NDVI < 0.2'),
+            mpatches.Patch(color=colors[1], label='Moderate Veg. 0.2 < NDVI < 0.6'),
+            mpatches.Patch(color=colors[2], label='Dense Veg. NDVI > 0.6'),]    
+
+
+    imgs = []
+
+    fig, ax = plt.subplots(dpi=500)
+    for time in times:
+        toplot = ds[time][-1]
+        date = paths_to_datetimeindex([time])[0]
+        season = get_season(date.month)
+
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.spines['bottom'].set_visible(False)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.legend(handles=patches, fontsize='small', loc='center', bbox_to_anchor=(0.5, -0.1), fancybox=False, ncol=3, frameon=False)
+        ax.patch.set_facecolor('xkcd:white')
+        text = ax.text(x=0, y=0, s=time+'\n'+str(season)+', '+str(date.year)+'\n'+site_code)
+        im = ax.imshow(toplot, cmap=cmap, norm=norm, animated=True)
+        imgs.append([im, text])
+
+    ani = animation.ArtistAnimation(fig, imgs, interval=800, blit=True)
+    ani.save("../outputs/movies/"+site_code+"_NDVI.mp4")
 
 
 
