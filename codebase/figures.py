@@ -96,7 +96,7 @@ def animate_ndvi_maps(ds, times, site_code):
 
     imgs = []
 
-    fig, ax = plt.subplots(dpi=500)
+    fig, ax = plt.subplots(figsize=(10,20), dpi=500)
     for time in times:
         toplot = ds[time][-1]
         date = paths_to_datetimeindex([time])[0]
@@ -108,14 +108,17 @@ def animate_ndvi_maps(ds, times, site_code):
         ax.spines['bottom'].set_visible(False)
         ax.set_xticks([])
         ax.set_yticks([])
-        ax.legend(handles=patches, fontsize='small', loc='center', bbox_to_anchor=(0.5, -0.1), fancybox=False, ncol=3, frameon=False)
+        ax.legend(handles=patches, fontsize=20, loc='center', bbox_to_anchor=(0.5,0.), fancybox=False, ncol=1, frameon=False)
         ax.patch.set_facecolor('xkcd:white')
-        text = ax.text(x=0, y=0, s=time+'\n'+str(season)+', '+str(date.year)+'\n'+site_code)
+        if season=='Dry':
+            text = ax.text(x=0, y=0, color='tab:red', s=time+'\n'+str(season)+', '+str(date.year)+'\n'+site_code, fontsize=30)
+        else:
+            text = ax.text(x=0, y=0, color='tab:blue', s=time+'\n'+str(season)+', '+str(date.year)+'\n'+site_code, fontsize=30)
         im = ax.imshow(toplot, cmap=cmap, norm=norm, animated=True)
         imgs.append([im, text])
 
     ani = animation.ArtistAnimation(fig, imgs, interval=800, blit=True)
-    ani.save("../outputs/movies/"+site_code+"_NDVI.mp4")
+    ani.save("../outputs/movies/"+site_code+"_NDVI.gif")
 
 
 
