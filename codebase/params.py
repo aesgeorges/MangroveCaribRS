@@ -4,6 +4,7 @@ mobile = False
 
 # Directory roots
 DOWNLOAD_DIR_ROOT = '../datasets/Planet/' #/global/scratch/users/alexandregeorges/datasets/Planet/'
+BASEMAP_DIR_ROOT = '../datasets/Basemaps/'
 ROOT_SHP = '../datasets/Shapefiles/'
 
 #  Download directories for Haiti and Trinidad respectively 
