@@ -26,7 +26,7 @@ TRAINING_LABELS_SHP = 'datasets/Shapefiles/crtt_training.shp' #'datasets/Shapefi
 
 # Image search parameters
 TIME_RANGE_BEGINNING = datetime(month=1, day=1, year=2010)
-TIME_RANGE_END = datetime(month=6, day=1, year=2023)
+TIME_RANGE_END = datetime(month=4, day=23, year=2024)
 
 CLEAR_PERCENT = 100
 CLOUD_COVER_PERCENT = 5

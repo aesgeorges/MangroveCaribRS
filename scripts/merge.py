@@ -2,13 +2,13 @@ print('Welcome to merge tool!')
 
 import os, glob, re, datetime, math
 import scipy.stats as stats
+from numpy import testing
 import rioxarray as rxr
 from osgeo import gdal
 import numpy as np
 
-
 import sys
-sys.path.append('/global/home/users/alexandregeorges/Chapter1/')
+sys.path.append('/global/home/users/alexandregeorges/[Chapter1] MangroveCaribRS/')
 
 from codebase.params import DOWNLOAD_DIR_ROOT
 
@@ -53,13 +53,15 @@ def find_dates(_files):
     return _dates
 
 def quality_control(files):
-    """Check whether merged .tif files covers the whole area of interest-if yes, proceed. if not, delete the merged file.
+    """
+    Check whether merged .tif files covers the whole area of interest-if yes, proceed. if not, delete the merged file.
     
     Counts the amount of NaNs in each merged file, determining how much 
     uncovered area there is in the merged file. I take the mode of the NaN counts as a baseline
     for what is considered 'full coverage'. If an image is not within 10% tolerance of that
     baseline, it is considered not fully covered. I use tolerance as NaNs sometimes show up in
-    covered areas."""
+    covered areas.
+    """
 
     files_to_check = [rxr.open_rasterio(f) for f in files]
     nan_counts = [f[-1].isnull().sum().values for f in files_to_check]
@@ -90,6 +92,7 @@ def merge_observations(dates, files, dl_path):
         mosaic = None
     quality_control(merged_paths)
 
+
 #site_codes = ['CCHT']#['CCHT', 'GSHT', 'BRHT', 'COHT', 'IVHT', 'AQHT', 'MGHT', 'ARHT', 'OKHT']
 
 site_codes = [input('Enter the site code for which your trying to merge (CCHT, CRTT, GPHT, etc.): ')]
@@ -112,8 +115,3 @@ for code in site_codes:
 #ht_dates, tt_dates = find_dates(ht_files, tt_files)
 #merge_observations(ht_dates, ht_files, DOWNLOAD_DIR_HT_CARACOL)
 #merge_observations(tt_dates, tt_files, DOWNLOAD_DIR_TT)
-
-
-
-
-

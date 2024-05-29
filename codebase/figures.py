@@ -132,16 +132,25 @@ def plot_ridge(sn, color, index, ax, count):
     count -- tracks which line in the figure we are working with.
     """
     data = clean_season(sn, index)
-    k = sns.kdeplot(data, ax=ax, fill=False, common_norm=True, color=color, linewidth=1.2)
-    x,y = k.get_lines()[count].get_data()
+    k = sns.kdeplot(data, ax=ax, fill=False, common_norm=True, color=color, linewidth=1.2, clip=(0.2, 1.0))
+    x,y = k.get_lines()[0].get_data()
     
+    median = sn['Median'].iloc[count]
     mode = x[np.argmax(y)]
-    f = np.interp(mode,x,y)
-    ax.vlines(mode, 0, f, color=color, lw=1.5)
+    perc25 = sn['25perc'].iloc[count]
+    perc75 = sn['75perc'].iloc[count]
+    #### add quartiles
+    f = np.interp(median,x,y)
+    g = np.interp(perc25,x,y)
+    h = np.interp(perc75,x,y)
+    ax.vlines(median, 0, f, color=color, lw=1.5)
+    ax.vlines(perc25, 0, g, color=color, linestyles='dashed', lw=0.5)
+    ax.vlines(perc75, 0, h, color=color, linestyles='dashed', lw=0.5)
     
     
     y_low = np.interp(0,x,y)
     y_high = np.interp(0.7,x,y)
+    ax.set_xlim(0.2, 1.0) 
     ax.vlines(0, 0, y_low, color='tab:red', linestyles='dashed', lw=1.5)
     ax.vlines(0.7, 0, y_high, color='tab:green', linestyles='dashed', lw=1.5)
     
@@ -152,28 +161,27 @@ def plot_ridge(sn, color, index, ax, count):
 def sn_ridgeplots(data, site_code):
     """ Plot a ridgeplot of aggregated NDVI values per season and per year."""
     n_seasons = data.shape[0]
-    fig, axs = plt.subplots(n_seasons, 1, figsize=(9, n_seasons+1), sharex=True)
-    
+    fig, axs = plt.subplots(n_seasons, 1, figsize=(7, n_seasons+1), sharex=True)
+    count = 0
     for i, ax in enumerate(axs):
         yr = data.iloc[i].name[0]
         season = data.iloc[i].name[1]
         
-        ax.set_xlim(-0.5, 1)
-        ax.text(x=-0.5, y=0.5, s=str(yr)+', '+season)
+        ax.set_xlim(0.1, 1)
+        ax.text(x=0.1, y=0.5, s=str(yr)+', '+season)
         ax.patch.set_alpha(0.0)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.spines['left'].set_visible(False)
         ax.get_yaxis().set_visible(False)
         
-        count = 0
         if season == 'Wet':
             plot_ridge(data, 'tab:blue', i, ax, count)
-            count += 1
         else:
             plot_ridge(data, 'tab:red', i, ax, count)
-            count += 1
-    fig.supxlabel('Seasonal NDVI Distribution at '+site_code)
+        count += 1
+    plt.savefig('../outputs/final figures/Paper_dNDVI_ridge.png', dpi=image_quality, bbox_inches='tight', transparent=True)
+    #fig.supxlabel('Seasonal NDVI Distribution at '+site_code)
 
     
 def yr_ridgeplots(obs, times, site_code):
@@ -308,3 +316,37 @@ def metrics_visualization(metric, aoi_list, title):
     #ax.set_xlim(-1.8, 1.8)
     ax.patch.set_facecolor('xkcd:white')
     ax.set_axisbelow(True)
+
+    
+def dndvi_plot(data, startDate, endDate, cmap_lims):
+    dndvi_perc = 100*((data[endDate][-1] - data[startDate][-1])/data[startDate][-1])
+    
+    # Plotting Change
+    # ax.set_title('Mangrove dNDVI (%) between '+times[0]+' and '+times[-1], loc='center')
+    fig, ax = plt.subplots(figsize=(20,20), dpi=600)
+
+    #ax.set_title('Mangrove dNDVI (%) between '+times[0]+' and '+times[-1], loc='center')
+    vmin, vcenter, vmax = cmap_lims
+    divnorm = colors_mat.TwoSlopeNorm(vmin=vmin,vcenter=vcenter,vmax=vmax)
+    
+    nd = ax.imshow(dndvi_perc, cmap='seismic_r', norm=divnorm)
+    cbar = plt.colorbar(nd, ax=ax, location='left', shrink=0.4, pad=-0.0025, label='NDVI Percent Change (%) \n Most Decrease to Most Increase')
+
+    #cbar.ax.yaxis.set_tick_params(color='white')  # Change tick color
+    #plt.setp(cbar.ax.yaxis.get_ticklabels(), color='white')
+    #cbar.set_label(label='NDVI Percent Change (%) \n Most Decrease to Most Increase', color='white')
+
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+
+    plt.savefig(f'../outputs/final figures/Paper_dNDVI_{startDate}_{endDate}.png', dpi=600, bbox_inches='tight', transparent=True)
+    plt.show()
+    
+    return dndvi_perc.astype("float32")
