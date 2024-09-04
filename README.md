@@ -122,3 +122,7 @@ I would like to acknowledge PlanetLabs who provided the data for this project.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
